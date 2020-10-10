@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+<table class="table table-striped  table-hover">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col">Pid</th>
+          <th scope="col">Commodity</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Time</th>
+        </tr>
+      </thead>
+    <tbody>
+        {% for pspending in pspendings: %}
+        <tr>
+            <th scope="row">{{pspending["pid"]}}</th>
+            <td>{{pspending["commodity"]}}</td>
+            <td>{{pspending["amount"]}}</td>
+            <td>{{pspending["time"]}}</td> 
+        </tr>
+        {% endfor %}
+        <tr class="table-info">
+            <th scope="row">CASH Remaining</th>
+            <td colspan="3"></td>
+            <td>{{cash}}</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        
+        <tr class="table-primary">
+            <th scope="row">NET-WORTH$$</th>
+            <td colspan="3"></td>
+            <td>{{grand_ptotal}}</td>
+        </tr>
+    </tfoot>
+</table>
+
+    <form action="/personal" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="commodity" placeholder="commodity" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="amount" placeholder="amount" type="number">
+        </div>
+        <button class="btn btn-primary" type="pspend">Spend!</button>
+    </form>
+{% endblock %}
+
