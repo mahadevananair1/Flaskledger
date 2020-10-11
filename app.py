@@ -202,11 +202,35 @@ def personaldelete(pid):
     return redirect("/personal") 
      
 
-@app.route("/personal/update")
+@app.route("/personal/update/<int:pid>",methods=["GET", "POST"])
 @login_required
-def personalupdate():
-    """Show portfolio of personal spendings"""
-    return apology("TODO")         
+def personalupdate(pid):
+    if request.method == "POST":
+        update_commodity = request.form.get("update_commodity")
+        update_amount = request.form.get("update_amount")
+        try:
+            update_amount = int(update_amount)
+        except:
+            return apology("enter a proper value")
+        if not update_commodity:
+            return apology("Missing  commodity!")
+        elif not update_amount:
+            return apology("Missing number of shares!")
+        elif int(update_amount)<= 0:
+            return apology("enter a proper value")    
+        else:  
+            rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
+            amount = db.execute("SELECT amount FROM personal WHERE pid=:pid",pid=pid)
+            cash = rows[0]["cash"]
+            amount = amount[0]["amount"]
+            updated_cash = (cash + amount) - update_amount 
+            db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
+            db.execute("UPDATE personal SET user_id=:user_id,amount=:amount,commodity=:commodity WHERE pid=:pid",user_id=session["user_id"],amount=update_amount,commodity=update_commodity,pid=pid)
+            flash("updated!!")
+            return redirect("/personal")  
+    else:
+        return apology("UNDApakuru") 
+
 
 @app.route("/education")
 @login_required
