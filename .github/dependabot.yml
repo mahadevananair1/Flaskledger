@@ -10,10 +10,10 @@ updates:
     schedule:
       interval: "daily"
 allow:
-      # Allow updates for Flask
-      - dependency-name: "flask"
-      # Allow updates for CS50 
-      - dependency-name: "cs50"     
-      # Allow updates for Requests 
-      - dependency-name: "requests" 
+    # Allow updates for Flask
+    - dependency-name: "flask"
+    # Allow updates for CS50 
+    - dependency-name: "cs50"     
+    # Allow updates for Requests 
+    - dependency-name: "requests" 
       
