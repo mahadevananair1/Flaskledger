@@ -21,6 +21,10 @@
             <td>{{pspending["commodity"]}}</td>
             <td>{{pspending["amount"]}}</td>
             <td>{{pspending["time"]}}</td> 
+            <td>
+                <a href="/personal/delete/{{pspending['pid']}}" class="btn btn-outline-light btn-large ">Delete</a>
+                <a href="/personal/update/{{pspending['pid']}}"class="btn btn-outline-light btn-large">Update</a>
+            </td>
         </tr>
         {% endfor %}
         <tr class="table-info">

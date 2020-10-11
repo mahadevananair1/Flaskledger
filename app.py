@@ -183,11 +183,24 @@ def personal():
             return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal))
       
 
-@app.route("/personal/delete")
+@app.route("/personal/delete/<int:pid>")
 @login_required
-def personaldelete():
-    """Show portfolio of personal spendings"""
-    return apology("TODO") 
+def personaldelete(pid):
+    """Delete personal spendings"""
+    rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
+    amount = db.execute("SELECT amount FROM personal WHERE pid=:pid",pid=pid)
+    cash = rows[0]["cash"]
+    amount = amount[0]["amount"]
+    print(cash)
+    print(amount)
+    updated_cash = cash + amount 
+    if updated_cash <0:
+        return apology("cant afford")
+    db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
+    db.execute("DELETE FROM personal WHERE pid =:pid ",pid=pid)
+    flash("Deleted!!")
+    return redirect("/personal") 
+     
 
 @app.route("/personal/update")
 @login_required
