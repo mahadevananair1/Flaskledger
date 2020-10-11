@@ -3,17 +3,18 @@
 # Please see the documentation for all configuration options:
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
-version: 2
-updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/venv/Scripts" # Location of package manifests
+- package-ecosystem: "pip"
+    directory: "/"
     schedule:
       interval: "daily"
-allow:
-    # Allow updates for Flask
-    - dependency-name: "flask"
-    # Allow updates for CS50 
-    - dependency-name: "cs50"     
-    # Allow updates for Requests 
-    - dependency-name: "requests" 
-      
+    allow:
+      # Allow only direct updates for
+      # Django and any packages starting "django"
+      - dependency-name: "flask*"
+        dependency-type: "direct"
+      # Allow only production updates for Sphinx
+      - dependency-name: "cs50"
+        dependency-type: "direct"
+      # Allow only production updates for Sphinx
+      - dependency-name: "requests"
+        dependency-type: "direct"  
