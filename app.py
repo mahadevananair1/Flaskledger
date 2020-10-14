@@ -275,7 +275,7 @@ def education():
             flash("Educated!!")
             return redirect("/education") 
     else:
-            erows = db.execute("""SELECT eid,epurpose,amount,period,datestamp,duedate 
+            erows = db.execute("""SELECT eid,epurpose,amount,period,datestamp,duedate,status 
             FROM education
             WHERE user_id = :user_id
             ORDER BY eid;
@@ -289,7 +289,8 @@ def education():
                     "amount": erow["amount"],
                     "period": erow["period"],  
                     "datestamp": erow["datestamp"], 
-                    "duedate": erow["duedate"],   
+                    "duedate": erow["duedate"],
+                    "status" : erow["status"]   
                 }) 
                 grand_etotal = grand_etotal + erow["amount"]
             cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
@@ -301,33 +302,53 @@ def education():
 @login_required
 def educationdelete(eid):
     """Show portfolio of personal spendings"""
-    rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
     erowsD = db.execute("SELECT amount,datestamp FROM education WHERE eid=:eid",eid=eid)
-    cash = rows[0]["cash"]
-    amount = erowsD[0]["amount"]
     datestamplist= erowsD[0]["datestamp"].split('-')
     datestamp = datetime.date(int(datestamplist[0]), int(datestamplist[1]), int(datestamplist[2]))
     today = date.today()
-    print(cash)
-    print(datestamp)
-    if (datestamp.year - today.year) * 12 + (datestamp.month - today.month) > 0:
-        updated_cash = cash + 1
-        print("date of payment is further than today")
-        print((datestamp.year - today.year) * 12 + (datestamp.month - today.month))
-    else:
-        updated_cash = cash + amount
-        print("date of payment due is behind today")
-        print((datestamp.year - today.year) * 12 + (datestamp.month - today.month))
-    db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
-    db.execute("DELETE FROM education WHERE eid =:eid ",eid=eid)
-    flash("Deleted!!")
+    db.execute("UPDATE education SET active=:active WHERE eid=:eid",eid=eid)
+    flash("Deactivated!!")
     return redirect("/education") 
 
-@app.route("/education/update")
+@app.route("/education/update/<int:eid>",methods=["GET", "POST"])
 @login_required
-def educationupdate():
-    """Show portfolio of personal spendings"""
-    return apology("TODO")      
+def educationupdate(eid):
+    if request.method == "POST":
+        """Show portfolio of personal spendings"""
+        update_epurpose = request.form.get("update_epurpose")
+        update_amount = request.form.get("update_amount")
+        update_period = request.form.get("update_period")
+        update_datestamp = request.form.get("update_datestamp")
+        update_status = request.form.get("updatestatus")
+        try:
+            update_amount = int(update_amount)
+            update_period = int(update_period)
+        except:
+            return apology("enter a proper value")
+        if not update_epurpose:
+            return apology("Missing  commodity!")
+        elif not update_amount:
+            return apology("Missing number of shares!")
+        elif int(update_amount)<= 0:
+            return apology("enter a proper value")    
+        else:  
+            rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
+            cash = rows[0]["cash"]
+            erowsD = db.execute("SELECT amount,duedate FROM education WHERE eid=:eid",eid=eid)
+            old_amount = int(erowsD[0]["amount"])
+            due_datestamp= erowsD[0]["duedate"].split('-')
+            olddue_datestamp = datetime.date(int(due_datestamp[0]), int(due_datestamp[1]), int(due_datestamp[2]))
+            update_datestamp= update_datestamp.split('-')
+            update_datestamp = datetime.date(int(update_datestamp[0]), int(update_datestamp[1]), int(update_datestamp[2]))
+            today = date.today()
+            if today < olddue_datestamp:
+                updated_cash = cash + old_amount
+                updated_cash = updated_cash - update_amount  
+            update_duedate = add_months(update_datestamp,update_period)   
+            db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
+            db.execute("UPDATE education SET user_id=:user_id,epurpose=:epurpose,amount=:amount,period=:period,duedate=:duedate WHERE eid=:eid",user_id=session["user_id"],epurpose=update_epurpose,amount=update_amount,period=update_period,duedate=update_duedate,eid=eid)
+            flash("Educated!!")
+            return redirect("/education")      
 
 @app.route("/monthly")
 @login_required

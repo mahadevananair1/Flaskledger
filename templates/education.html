@@ -24,17 +24,18 @@
             <td>{{espending["amount"]}}</td>
             <td>{{espending["period"]}}</td> 
             <td>{{espending["datestamp"]}}</td> 
-            <td>{{espending["duedate"]}}</td> 
+            <td>{{espending["duedate"]}}</td>
+            <td>{{espending["status"]}}</td> 
             <td>
-                <a href="/education/delete/{{espending['eid']}}" class="btn btn-dark btn-large ">Delete</a>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="{{espending['epurpose']}}" data-link="/education/update/{{espending['eid']}}">update</button>
-            </td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="{{espending['epurpose']}}" data-link="/education/update/{{espending['eid']}}"data-amount="{{espending['amount']}}" data-period="{{espending['period']}}"data-datestamp="{{espending['datestamp']}}" data-status="{{espending['status']}}">update</button>
+                <a href="/education/pay/{{espending['eid']}}" class="btn btn-success btn-large ">Pay</a>
+              </td>
         </tr>
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                  <h5 class="modal-title" id="exampleModalLabel">Update</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -43,16 +44,25 @@
                   <form class="formaction" method="POST">
                     <div class="form-group">
                       <label for="recipient-name"  class="col-form-label">epurpose:</label>
-                      <input type="text" class="form-control" name="update_epurpose" id="recipient-name">
+                      <input type="text" class="form-control modalpurpose" name="update_epurpose" id="recipient-name">
                     </div>
                     <div class="form-group">
                       <label for="message-text" class="col-form-label">amount:</label>
-                      <input class="form-control" type="number" name="update_amount" id="message-text"></input>
+                      <input class="form-control modalamount" type="number" name="update_amount" id="message-text"></input>
                     </div>
                     <div class="form-group">
                         <label for="message-text" class="col-form-label">period:</label>
-                        <input class="form-control" type="number" name="update_period" id="message-text"></input>
+                        <input class="form-control modalperiod" type="number" name="update_period" id="message-text"></input>
                       </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">date:</label>
+                        <input class="form-control modaldatestamp" type="date" name="update_datestamp" id="message-text"></input>
+                      </div>
+                    <div class="custom-control custom-checkbox mb-3 alert alert-danger">
+                      <input type="checkbox" class="custom-control-input" name="updatestatus" id="customControlValidation1" value=0 >
+                      <label class="custom-control-label btn btn-danger" for="customControlValidation1">Deactivate</label>
+                      <div>This is a Dangerous Step by deactivating you will no longer recive remeinders about this education policy</div>
+                    </div>  
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -84,24 +94,30 @@
             <input autocomplete="off" autofocus class="form-control" name="epurpose" placeholder="commodity" type="text">
         </div>
         <div class="form-group">
-            <input class="form-control" name="period" placeholder="amount" type="number">
+            <input class="form-control" name="period" placeholder="period" type="number">
         </div>
         <div class="form-group">
             <input class="form-control" name="amount" placeholder="amount" type="number">
-        </div>
+        </div> 
         <button class="btn btn-primary" type="pspend">Spend!</button>
     </form>
 <script>
     $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var recipient = button.data('whatever')
+        var  amount= button.data('amount')
+        var datestamp = button.data('datestamp')
+        var period = button.data('period')
         var link = button.data('link')
         // Extract info from data-* attributes
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
         var modal = $(this)
         modal.find('.modal-title').text('New message to ' + recipient)
-        modal.find('.modal-body input').val(recipient)
+        modal.find('.modalpurpose').val(recipient)
+        modal.find('.modalamount').val(amount)
+        modal.find('.modaldatestamp').val(datestamp)
+        modal.find('.modalperiod').val(period)
         modal.find('.formaction').attr("action",link)
       }) 
 </script>         
