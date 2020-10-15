@@ -251,11 +251,13 @@ def education():
         epurpose = request.form.get("epurpose")
         amount = request.form.get("amount")
         period = request.form.get("period")
+        category = request.form.get("category")
         try:
             amount = int(amount)
             period = int(period)
+            category = str(category)
         except:
-            return apology("enter a proper value")
+            return apology("please check your inputs")
         if not epurpose:
             return apology("Missing  commodity!")
         elif not amount:
@@ -271,11 +273,11 @@ def education():
             today = date.today() 
             duedate = add_months(today,period)   
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
-            db.execute("INSERT INTO education (user_id,epurpose,amount,period,duedate) VALUES (:user_id,:epurpose,:amount,:period,:duedate)",user_id=session["user_id"],epurpose=epurpose,amount=amount,period=period,duedate=duedate)
+            db.execute("INSERT INTO education (user_id,epurpose,amount,period,duedate,category) VALUES (:user_id,:epurpose,:amount,:period,:duedate,:category)",user_id=session["user_id"],epurpose=epurpose,amount=amount,period=period,duedate=duedate,category=category)
             flash("Educated!!")
             return redirect("/education") 
     else:
-            erows = db.execute("""SELECT eid,epurpose,amount,period,datestamp,duedate,status 
+            erows = db.execute("""SELECT eid,epurpose,amount,period,datestamp,duedate,status,category 
             FROM education
             WHERE user_id = :user_id
             ORDER BY eid;
@@ -290,36 +292,37 @@ def education():
                     "period": erow["period"],  
                     "datestamp": erow["datestamp"], 
                     "duedate": erow["duedate"],
-                    "status" : erow["status"]   
+                    "status" : erow["status"],
+                    "category": erow["category"]
                 }) 
                 grand_etotal = grand_etotal + erow["amount"]
             cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
             cash = cash[0]["cash"]   
-            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal))
+            today=str(date.today())
+            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today)
 
 
-@app.route("/education/delete/<int:eid>")
+
+
+@app.route("/education/edit/<int:eid>",methods=["GET", "POST"])
 @login_required
-def educationdelete(eid):
-    """Show portfolio of personal spendings"""
-    erowsD = db.execute("SELECT amount,datestamp FROM education WHERE eid=:eid",eid=eid)
-    datestamplist= erowsD[0]["datestamp"].split('-')
-    datestamp = datetime.date(int(datestamplist[0]), int(datestamplist[1]), int(datestamplist[2]))
-    today = date.today()
-    db.execute("UPDATE education SET active=:active WHERE eid=:eid",eid=eid)
-    flash("Deactivated!!")
-    return redirect("/education") 
-
-@app.route("/education/update/<int:eid>",methods=["GET", "POST"])
-@login_required
-def educationupdate(eid):
+def educationedit(eid):
     if request.method == "POST":
         """Show portfolio of personal spendings"""
         update_epurpose = request.form.get("update_epurpose")
         update_amount = request.form.get("update_amount")
         update_period = request.form.get("update_period")
         update_datestamp = request.form.get("update_datestamp")
-        update_status = request.form.get("updatestatus")
+        update_category = request.form.get("update_category")
+        print("++++++++++++++++++",update_category)
+        
+        try:
+            update_status = int(request.form.get("updatestatus"))   
+                
+        except:
+            update_status = 1 
+        
+        print("STATUS******",update_status)
         try:
             update_amount = int(update_amount)
             update_period = int(update_period)
@@ -332,29 +335,55 @@ def educationupdate(eid):
         elif int(update_amount)<= 0:
             return apology("enter a proper value")    
         else:  
-            rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
-            cash = rows[0]["cash"]
-            erowsD = db.execute("SELECT amount,duedate FROM education WHERE eid=:eid",eid=eid)
-            old_amount = int(erowsD[0]["amount"])
+            erowsD = db.execute("SELECT duedate FROM education WHERE eid=:eid",eid=eid)
             due_datestamp= erowsD[0]["duedate"].split('-')
             olddue_datestamp = datetime.date(int(due_datestamp[0]), int(due_datestamp[1]), int(due_datestamp[2]))
             update_datestamp= update_datestamp.split('-')
             update_datestamp = datetime.date(int(update_datestamp[0]), int(update_datestamp[1]), int(update_datestamp[2]))
-            today = date.today()
-            if today < olddue_datestamp:
-                updated_cash = cash + old_amount
-                updated_cash = updated_cash - update_amount  
+            today = date.today() 
             update_duedate = add_months(update_datestamp,update_period)   
-            db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
-            db.execute("UPDATE education SET user_id=:user_id,epurpose=:epurpose,amount=:amount,period=:period,duedate=:duedate WHERE eid=:eid",user_id=session["user_id"],epurpose=update_epurpose,amount=update_amount,period=update_period,duedate=update_duedate,eid=eid)
-            flash("Educated!!")
+            db.execute("UPDATE education SET user_id=:user_id,epurpose=:epurpose,amount=:amount,period=:period,datestamp=:update_datestamp,duedate=:duedate,status=:update_status,category=:update_category WHERE eid=:eid",user_id=session["user_id"],epurpose=update_epurpose,amount=update_amount,period=update_period,update_datestamp=update_datestamp,duedate=update_duedate,update_status=update_status,update_category=update_category,eid=eid)
+            flash("updated!!")
             return redirect("/education")      
+ 
 
-@app.route("/monthly")
+@app.route("/education/pay/<int:eid>",methods=["GET", "POST"])
 @login_required
-def monthly():
-    """Show portfolio of monthly bills"""
-    return apology("TODO")
+def educationupdate(eid):
+    if request.method == "POST":
+        """Show portfolio of personal spendings"""
+        update_epurpose = request.form.get("update_epurpose")
+        update_amount = request.form.get("update_amount")
+        update_period = request.form.get("update_period")
+        update_datestamp = request.form.get("update_datestamp")
+        try:
+            update_status = int(request.form.get("updatestatus"))       
+        except:
+            update_status = 1 
+        
+        print("STATUS******",update_status)
+        try:
+            update_amount = int(update_amount)
+            update_period = int(update_period)
+        except:
+            return apology("enter a proper value")
+        if not update_epurpose:
+            return apology("Missing  commodity!")
+        elif not update_amount:
+            return apology("Missing number of shares!")
+        elif int(update_amount)<= 0:
+            return apology("enter a proper value")    
+        else:  
+            erowsD = db.execute("SELECT duedate FROM education WHERE eid=:eid",eid=eid)
+            due_datestamp= erowsD[0]["duedate"].split('-')
+            olddue_datestamp = datetime.date(int(due_datestamp[0]), int(due_datestamp[1]), int(due_datestamp[2]))
+            update_datestamp= update_datestamp.split('-')
+            update_datestamp = datetime.date(int(update_datestamp[0]), int(update_datestamp[1]), int(update_datestamp[2]))
+            today = date.today() 
+            update_duedate = add_months(update_datestamp,update_period)   
+            db.execute("UPDATE education SET user_id=:user_id,epurpose=:epurpose,amount=:amount,period=:period,duedate=:duedate,status=:update_status WHERE eid=:eid",user_id=session["user_id"],epurpose=update_epurpose,amount=update_amount,period=update_period,duedate=update_duedate,update_status=update_status,eid=eid)
+            flash("updated!!")
+            return redirect("/education")  
 
 @app.route("/stock/buy", methods=["GET", "POST"])
 @login_required
