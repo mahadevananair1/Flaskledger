@@ -352,37 +352,35 @@ def educationedit(eid):
 def educationupdate(eid):
     if request.method == "POST":
         """Show portfolio of personal spendings"""
-        update_epurpose = request.form.get("update_epurpose")
-        update_amount = request.form.get("update_amount")
-        update_period = request.form.get("update_period")
-        update_datestamp = request.form.get("update_datestamp")
+        pay_amount = request.form.get("pay_amount")
+        pay_datestamp = request.form.get("pay_datestamp")
+        print("******************payment gateway")
         try:
-            update_status = int(request.form.get("updatestatus"))       
+            pay_status = int(request.form.get("pay_status"))       
         except:
-            update_status = 1 
+            pay_status = 1 
         
-        print("STATUS******",update_status)
+        print("STATUS******",pay_status)
         try:
-            update_amount = int(update_amount)
-            update_period = int(update_period)
+            pay_amount = int(pay_amount)
         except:
             return apology("enter a proper value")
-        if not update_epurpose:
-            return apology("Missing  commodity!")
-        elif not update_amount:
+        if not pay_amount:
             return apology("Missing number of shares!")
-        elif int(update_amount)<= 0:
+        elif int(pay_amount)<= 0:
             return apology("enter a proper value")    
         else:  
-            erowsD = db.execute("SELECT duedate FROM education WHERE eid=:eid",eid=eid)
+            erowsD = db.execute("SELECT duedate,period FROM education WHERE eid=:eid",eid=eid)
+            print(erowsD)
+            pay_period = erowsD[0]["period"]
             due_datestamp= erowsD[0]["duedate"].split('-')
             olddue_datestamp = datetime.date(int(due_datestamp[0]), int(due_datestamp[1]), int(due_datestamp[2]))
-            update_datestamp= update_datestamp.split('-')
-            update_datestamp = datetime.date(int(update_datestamp[0]), int(update_datestamp[1]), int(update_datestamp[2]))
+            pay_datestamp= pay_datestamp.split('-')
+            pay_datestamp = datetime.date(int(pay_datestamp[0]), int(pay_datestamp[1]), int(pay_datestamp[2]))
             today = date.today() 
-            update_duedate = add_months(update_datestamp,update_period)   
-            db.execute("UPDATE education SET user_id=:user_id,epurpose=:epurpose,amount=:amount,period=:period,duedate=:duedate,status=:update_status WHERE eid=:eid",user_id=session["user_id"],epurpose=update_epurpose,amount=update_amount,period=update_period,duedate=update_duedate,update_status=update_status,eid=eid)
-            flash("updated!!")
+            pay_duedate = add_months(pay_datestamp,pay_period)   
+            db.execute("UPDATE education SET user_id=:user_id,amount=:pay_amount,period=:pay_period,duedate=:pay_duedate,status=:pay_status WHERE eid=:eid",user_id=session["user_id"],pay_amount=pay_amount,pay_period=pay_period,pay_duedate=pay_duedate,pay_status=pay_status,eid=eid)
+            flash("payment made!!")
             return redirect("/education")  
 
 @app.route("/stock/buy", methods=["GET", "POST"])
