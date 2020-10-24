@@ -169,8 +169,10 @@ def personal():
             updated_cash = cash - amount 
             if updated_cash <0:
                 return apology("cant afford")
+            category= "personal"    
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO personal (user_id,amount,commodity) VALUES (:user_id,:amount,:commodity)",user_id=session["user_id"],amount=amount,commodity=commodity)
+            db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category) VALUES (:user_id,:amount,:paymentpurpose,:category)",user_id=session["user_id"],amount=amount,paymentpurpose=commodity,category=category)
             flash("Bought!!")
             return redirect("/personal") 
     else:
@@ -191,8 +193,25 @@ def personal():
                 grand_ptotal = grand_ptotal + prow["amount"]
             cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
             cash = cash[0]["cash"]   
-            return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal))
-      
+            # all personal spending table ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            hprows = db.execute("""SELECT pay_id,paymentpurpose,amount,datestamp,category 
+            FROM paymenthistory
+            WHERE user_id = :user_id AND category="personal"
+            ORDER BY pay_id;
+            """,user_id=session['user_id'])
+            hpspendings = []
+            hpgrand_ptotal =0
+            for hprow in hprows:
+                hpspendings.append({
+                    "payid": hprow["pay_id"],
+                    "paymentpurpose": hprow["paymentpurpose"],
+                    "amount": hprow["amount"],
+                    "datestamp": hprow["datestamp"],
+                    "category": hprow["category"]    
+                }) 
+                hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
+            # all personal spending table ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal),hpspendings=hpspendings,hpgrand_total = hpgrand_ptotal)
 
 @app.route("/personal/delete/<int:pid>")
 @login_required
@@ -274,6 +293,8 @@ def education():
             duedate = add_months(today,period)   
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO education (user_id,epurpose,amount,period,duedate,category) VALUES (:user_id,:epurpose,:amount,:period,:duedate,:category)",user_id=session["user_id"],epurpose=epurpose,amount=amount,period=period,duedate=duedate,category=category)
+            db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category) VALUES (:user_id,:amount,:paymentpurpose,:category)",user_id=session["user_id"],amount=amount,paymentpurpose=epurpose,category=category)
+
             flash("Educated!!")
             return redirect("/education") 
     else:
@@ -299,7 +320,25 @@ def education():
             cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
             cash = cash[0]["cash"]   
             today=str(date.today())
-            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today)
+            # EDucation display ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            hprows = db.execute("""SELECT pay_id,paymentpurpose,amount,datestamp,category 
+            FROM paymenthistory
+            WHERE user_id = :user_id AND category != "personal"
+            ORDER BY pay_id;
+            """,user_id=session['user_id'])
+            hpspendings = []
+            hpgrand_ptotal =0
+            for hprow in hprows:
+                hpspendings.append({
+                    "payid": hprow["pay_id"],
+                    "paymentpurpose": hprow["paymentpurpose"],
+                    "amount": hprow["amount"],
+                    "datestamp": hprow["datestamp"],
+                    "category": hprow["category"]    
+                }) 
+                hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
+            #  Education display +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today,hpspendings=hpspendings,hpgrand_ptotal=hpgrand_ptotal)
 
 
 

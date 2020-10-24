@@ -122,6 +122,18 @@
                       </div>
                     </div>
               </div>
+
+              {% for hpspending in hpspendings: %}
+             <tr>
+              <th scope="row">{{hpspending["payid"]}}</th>
+              <td>{{hpspending["paymentpurpose"]}}</td>
+              <td>{{hpspending["amount"]}}</td>
+              <td>{{hpspending["datestamp"]}}</td> 
+              <td>{{hpspending["category"]}}</td> 
+              <td>{{hpgrand_ptotal}}</td> 
+            </tr>
+        {% endfor %}
+
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button type="submit"  class="btn btn-primary ">Update</button>
@@ -170,6 +182,16 @@
         </div> 
         <button class="btn btn-primary" type="pspend">Add and Spend!</button>
     </form>
+    {% for hpspending in hpspendings: %}
+    <tr>
+     <th scope="row">{{hpspending["payid"]}}</th>
+     <td>{{hpspending["paymentpurpose"]}}</td>
+     <td>{{hpspending["amount"]}}</td>
+     <td>{{hpspending["datestamp"]}}</td> 
+     <td>{{hpspending["category"]}}</td> 
+     <td>{{hpgrand_ptotal}}</td> 
+   </tr>
+{% endfor %}
 <script>
     $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
