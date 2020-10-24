@@ -1,0 +1,117 @@
+
+
+body {
+  font-family: "Poppins", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px;
+  background: url("loginpage.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center ;
+}
+.container {
+  width: 10%;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+}
+.card {
+  transform-style: preserve-3d;
+  height: 70vh;
+  width: 30rem;
+  border-radius: 30px;
+  padding: 10px;
+  margin-top: 10vh;
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.2), 0px 0px 50px rgba(0, 0, 0, 0.2);
+}
+
+.sneaker {
+  min-height: 35vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sneaker img {
+  width: 60%;
+  z-index: 2;
+  transition: all 0.75s ease-out;
+}
+.circle {
+  width: 40%;
+  height: 20%;
+  background: linear-gradient(
+    to right,
+    rgba(245, 70, 66, 0.75),
+    rgba(8, 83, 156, 0.75)
+  );
+  position: absolute;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.info h1 {
+  transition: all 0.75s ease-out;
+}
+.info h3 {
+  color: #585858;
+  font-weight: lighter;
+  transition: all 0.75s ease-out;
+}
+.sizes {
+  display: flex;
+  justify-content: space-between;
+  transition: all 0.75s ease-out;
+}
+.sizes button {
+  padding: 0.5rem 2rem;
+  background: none;
+  border: none;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #585858;
+}
+
+.purchase {
+  margin-top: 5px;
+  transition: all 0.75s ease-out;
+}
+.purchase button {
+  width: 100%;
+  background: #f0b63a;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 30px;
+  font-weight: bolder;
+}
+
+input
+{
+  border: none;
+  outline: none;
+  background: none;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+}
+
+.inputcolumns{
+  transition: all 0.75s ease-out;
+}
+.logpage_nav button{
+
+  background-color: aliceblue;
+  border-style: none;
+  border-radius: 20px;
+  transition: 0.6 ease-in-out;
+  transition-duration: 0.6s;
+  margin-left: 10px; 
+}
+
+.logpage_nav :hover{
+  font-size: large;
+  transition-duration: 0.6s;
+}

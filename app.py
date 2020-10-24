@@ -183,13 +183,15 @@ def personal():
             """,user_id=session['user_id'])
             pspendings = []
             grand_ptotal =0
+            count = 1
             for prow in prows:
                 pspendings.append({
-                    "pid": prow["pid"],
+                    "pid": count,
                     "commodity": prow["commodity"],
                     "amount": prow["amount"],
                     "time": prow["time"],    
                 }) 
+                count = count+1
                 grand_ptotal = grand_ptotal + prow["amount"]
             cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
             cash = cash[0]["cash"]   
