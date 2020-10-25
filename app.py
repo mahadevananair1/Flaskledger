@@ -185,6 +185,7 @@ def personal():
 
             today_year = today[0]
             today_month= today[1]
+            nottoday_month = int(today_month) - 1
 
             prows = db.execute("""SELECT pid,commodity,amount,time 
             FROM personal
@@ -203,12 +204,21 @@ def personal():
                 }) 
                 
                 grand_ptotal = grand_ptotal + prow["amount"]
+
+
+            sums = db.execute("""SELECT sum(amount)
+            FROM personal
+            WHERE user_id = :user_id 
+            """,user_id=session['user_id'])
+
+            total_spending=sums[0]['sum(amount)']
+
             cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
             cash = cash[0]["cash"]   
             # all personal spending table ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             hprows = db.execute("""SELECT pay_id,paymentpurpose,amount,datestamp,category 
             FROM paymenthistory
-            WHERE user_id = :user_id AND category="personal"
+            WHERE user_id = :user_id AND category="personal" 
             ORDER BY pay_id;
             """,user_id=session['user_id'])
             hpspendings = []
@@ -223,7 +233,7 @@ def personal():
                 }) 
                 hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
             # all personal spending table ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal),hpspendings=hpspendings,hpgrand_total = hpgrand_ptotal)
+            return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal),hpspendings=hpspendings,hpgrand_total = hpgrand_ptotal,total_spending=usd(total_spending))
 
 @app.route("/personal/delete/<int:pid>")
 @login_required

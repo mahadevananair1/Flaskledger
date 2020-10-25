@@ -8,29 +8,29 @@
 <!-- CARDS CARDS &********************&%*%^$%%$%$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 
 <div class="card-group">
-    <div class="card text-white bg-primary mb-3" style="max-width: 18rem; margin: 10px;">
-        <div class="card-header">This month</div>
+    <div class="card text-white bg-dark mb-3" style="max-width: 18rem; margin: 10px;">
+        <div class="card-header">Wallet</div>
+        <div class="card-body">
+            <i class="fas fa-wallet" style="font-size: xx-large;"></i>
+            <span><h5 class="card-title">{{cash}}</h5></span>
+        </div>
+    </div>
+
+    <div class="card text-white bg-success mb-3" style="max-width: 18rem; margin: 10px;">
+        <div class="card-header">This Month</div>
         <div class="card-body">
             <i class="far fa-address-book" style="font-size: xx-large;"></i>
             <span><h5 class="card-title">{{grand_ptotal}}</h5></span>
         </div>
     </div>
 
-    <div class="card text-white bg-primary mb-3" style="max-width: 18rem; margin: 10px;">
-        <div class="card-header">This month</div>
-        <div class="card-body">
-            <i class="far fa-address-book" style="font-size: xx-large;"></i>
-            <span><h5 class="card-title">{{grand_ptotal}}</h5></span>
-        </div>
-    </div>
-
 
 
     <div class="card text-white bg-primary mb-3" style="max-width: 18rem; margin: 10px;">
-        <div class="card-header">This month</div>
+        <div class="card-header">This Year till now</div>
         <div class="card-body">
-            <i class="far fa-address-book" style="font-size: xx-large;"></i>
-            <span><h5 class="card-title">{{grand_ptotal}}</h5></span>
+            <i class="far fa-calendar-alt" style="font-size: xx-large;"></i>
+            <span><h5 class="card-title">{{total_spending}}</h5></span>
         </div>
     </div>
 </div>
@@ -51,51 +51,62 @@
 
 <!-- Main chart and ADD Panel $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
 <!-- Main chart and ADD Panel $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
+<script>
+    startTime();
+
+    var dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+    var newDate = new Date();
+
+    var DateString = '';
+    for (var i = 0; i < 7; i++) {
+        if (i == newDate.getDay()) {
+            DateString += "<span class='clock__date--curr'>" + dayNames[i] + "</span> ";
+        } else {
+            DateString += "<span>" + dayNames[i] + "</span> ";
+        }
+    }
+    $('.clock__date').html(DateString);
+
+    function startTime() {
+        var today = new Date();
+        var h = checkTime(today.getHours());
+        var m = checkTime(today.getMinutes());
+        var s = checkTime(today.getSeconds());
+
+        var TimeString = h + ':' + m + ':' + s;
+        TimeString = '<span>' + TimeString.split('').join('</span><span>') + '</span>';
+        $('.clock__time').html(TimeString);
+
+        var t = setTimeout(function() {
+            startTime()
+        }, 1000);
+    }
+
+    function checkTime(i) {
+        if (i < 10) {
+            i = '0' + i
+        };
+        return i;
+    }
+
+    $('.clock-toogle').click(function() {
+        $('body').toggleClass('dark');
+    });
+</script>
 <!-- Main chart and ADD Panel $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
 <!-- Main chart and ADD Panel $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ -->
 <div class="card-group">
     <div class="card wrapper" style="max-width: 40rem; ">
         <div class="card-body">
-            <canvas id="myChart" width="400" height="200vh"></canvas>
-            <script>
-                var ctx = document.getElementById('myChart').getContext('2d');
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                        datasets: [{
-                            label: '# moneys',
-                            data: [5, 5, 105, 5, 5, 5],
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                        }
-                    }
-                });
-            </script>
+            <div class="clock-wrap container">
+                <div class="clock">
+                    <div class="clock__date">
+                    </div>
+                    <div class="clock__time ">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -195,21 +206,10 @@
                 </div>
             </div>
             {% endfor %}
-            <tr class="table-info">
-                <th scope="row">CASH Remaining</th>
-                <td colspan="3"></td>
-                <td>{{cash}}</td>
-            </tr>
+
 
         </tbody>
-        <tfoot>
 
-            <tr class="table-primary">
-                <th scope="row">NET-WORTH$$</th>
-                <td colspan="3"></td>
-                <td>{{grand_ptotal}}</td>
-            </tr>
-        </tfoot>
 
     </table>
 
@@ -233,31 +233,10 @@
     <!-- other months++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- other months++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- other months++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <div class="card-group">
-        <h1 class="display-1 card" style="border-style: none">Last Month</h1>
+
+    <h1 class="display-1 " style="border-style: none">Payment History till date</h1>
 
 
-
-        <form class="card align-items-center border-primary" style="border-radius:40px; padding: 10px;">
-            <div class="form-row align-items-center">
-                <div class="col-auto my-1">
-                    <label class="mr-sm-2" for="inlineFormCustomSelect">Select required month</label>
-                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-            <option selected>Choose...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </select>
-                </div>
-            </div>
-            <span class="col-auto">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </span>
-
-        </form>
-
-
-    </div>
     <table class="table table-striped table-hover table-primary">
         <thead class="thead-dark">
             <tr>
