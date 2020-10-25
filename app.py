@@ -172,26 +172,36 @@ def personal():
             category= "personal"    
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO personal (user_id,amount,commodity) VALUES (:user_id,:amount,:commodity)",user_id=session["user_id"],amount=amount,commodity=commodity)
-            db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category) VALUES (:user_id,:amount,:paymentpurpose,:category)",user_id=session["user_id"],amount=amount,paymentpurpose=commodity,category=category)
+            temp_pid=db.execute("SELECT pid FROM personal ORDER BY pid DESC LIMIT 1")
+            temp_pid=temp_pid[0]["pid"]
+            db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category,pid) VALUES (:user_id,:amount,:paymentpurpose,:category,:temp_pid)",user_id=session["user_id"],amount=amount,paymentpurpose=commodity,category=category,temp_pid=temp_pid)
             flash("Bought!!")
             return redirect("/personal") 
     else:
+            today = str(date.today()) 
+            print(" PERSONAL TOODAY: ",today)
+            today = today.split('-')
+            print("SPLITEED",today)
+
+            today_year = today[0]
+            today_month= today[1]
+
             prows = db.execute("""SELECT pid,commodity,amount,time 
             FROM personal
-            WHERE user_id = :user_id
+            WHERE user_id = :user_id AND  strftime('%m', time) = :today_month AND strftime('%Y', time) = :today_year
             ORDER BY pid;
-            """,user_id=session['user_id'])
+            """,user_id=session['user_id'],today_month=str(today_month),today_year=str(today_year))
             pspendings = []
             grand_ptotal =0
             count = 1
             for prow in prows:
                 pspendings.append({
-                    "pid": count,
+                    "pid": prow["pid"],
                     "commodity": prow["commodity"],
                     "amount": prow["amount"],
                     "time": prow["time"],    
                 }) 
-                count = count+1
+                
                 grand_ptotal = grand_ptotal + prow["amount"]
             cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
             cash = cash[0]["cash"]   
@@ -230,6 +240,8 @@ def personaldelete(pid):
         return apology("cant afford")
     db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
     db.execute("DELETE FROM personal WHERE pid =:pid ",pid=pid)
+    db.execute("DELETE FROM  paymenthistory WHERE pid=:pid",pid=pid)
+
     flash("Deleted!!")
     return redirect("/personal") 
      
@@ -253,11 +265,15 @@ def personalupdate(pid):
         else:  
             rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
             amount = db.execute("SELECT amount FROM personal WHERE pid=:pid",pid=pid)
+            print("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+            print(amount)
+            print(rows)
             cash = rows[0]["cash"]
             amount = amount[0]["amount"]
             updated_cash = (cash + amount) - update_amount 
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("UPDATE personal SET user_id=:user_id,amount=:amount,commodity=:commodity WHERE pid=:pid",user_id=session["user_id"],amount=update_amount,commodity=update_commodity,pid=pid)
+            db.execute("UPDATE paymenthistory SET amount=:amount,paymentpurpose=:paymentpurpose WHERE pid=:pid ",amount=update_amount,paymentpurpose=update_commodity,pid=pid)
             flash("updated!!")
             return redirect("/personal")  
     else:
