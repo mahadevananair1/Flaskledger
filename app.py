@@ -36,7 +36,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
+db = SQL("postgres://vynshprctkpesu:861bfaae23aee9c958269824941d22eb91b57b5f26c210024584f841e6082565@ec2-34-231-56-78.compute-1.amazonaws.com:5432/d7o8uin56i2hl0")
 
 # Make sure API key is set
 # if not os.environ.get("API_KEY"):
@@ -134,16 +134,16 @@ def stock():
             "price": usd(stock["price"]),
             "total": usd(stock["price"] * row["totalShares"])
         })
-        grand_total = stock["price"] * row["totalShares"] 
-    cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
-    cash = cash[0]["cash"] 
-    grand_total = grand_total + cash  
+        grand_total = stock["price"] * row["totalShares"]
+    cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"])
+    cash = cash[0]["cash"]
+    grand_total = grand_total + cash
     return render_template("stock.html",holdings=holdings, cash =usd(cash), grand_total=usd(grand_total))
 
 
 
 
-    
+
 @app.route("/personal", methods=["GET", "POST"])
 @login_required
 def personal():
@@ -160,24 +160,24 @@ def personal():
         elif not amount:
             return apology("Missing number of shares!")
         elif int(amount)<= 0:
-            return apology("enter a proper value")    
-        else:  
+            return apology("enter a proper value")
+        else:
             rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
             cash = rows[0]["cash"]
-            updated_cash = cash - amount 
+            updated_cash = cash - amount
             if updated_cash <0:
                 return apology("cant afford")
-            category= "personal"    
+            category= "personal"
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO personal (user_id,amount,commodity) VALUES (:user_id,:amount,:commodity)",user_id=session["user_id"],amount=amount,commodity=commodity)
             temp_pid=db.execute("SELECT pid FROM personal ORDER BY pid DESC LIMIT 1")
             temp_pid=temp_pid[0]["pid"]
             db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category,pid) VALUES (:user_id,:amount,:paymentpurpose,:category,:temp_pid)",user_id=session["user_id"],amount=amount,paymentpurpose=commodity,category=category,temp_pid=temp_pid)
             flash("Bought!!")
-            return redirect("/personal") 
+            return redirect("/personal")
     else:
-        
-            today = str(date.today()) 
+
+            today = str(date.today())
             print(" PERSONAL TOODAY: ",today)
             today = today.split('-')
             print("SPLITEED",today)
@@ -186,7 +186,7 @@ def personal():
             today_month= today[1]
             nottoday_month = int(today_month) - 1
 
-            prows = db.execute("""SELECT pid,commodity,amount,time 
+            prows = db.execute("""SELECT pid,commodity,amount,time
             FROM personal
             WHERE user_id = :user_id AND  strftime('%m', time) = :today_month AND strftime('%Y', time) = :today_year
             ORDER BY pid;
@@ -199,28 +199,28 @@ def personal():
                     "pid": prow["pid"],
                     "commodity": prow["commodity"],
                     "amount": prow["amount"],
-                    "time": prow["time"],    
-                }) 
+                    "time": prow["time"],
+                })
                 try:
                     grand_ptotal = grand_ptotal + prow["amount"]
                 except:
                     grand_ptotal = 0
-                    break    
+                    break
 
 
             sums = db.execute("""SELECT sum(amount)
             FROM personal
-            WHERE user_id = :user_id 
+            WHERE user_id = :user_id
             """,user_id=session['user_id'])
 
             total_spending=sums[0]['sum(amount)']
 
-            cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
-            cash = cash[0]["cash"]   
+            cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"])
+            cash = cash[0]["cash"]
             # all personal spending table ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            hprows = db.execute("""SELECT pay_id,paymentpurpose,amount,datestamp,category 
+            hprows = db.execute("""SELECT pay_id,paymentpurpose,amount,datestamp,category
             FROM paymenthistory
-            WHERE user_id = :user_id AND category="personal" 
+            WHERE user_id = :user_id AND category="personal"
             ORDER BY pay_id;
             """,user_id=session['user_id'])
             hpspendings = []
@@ -231,13 +231,13 @@ def personal():
                     "paymentpurpose": hprow["paymentpurpose"],
                     "amount": hprow["amount"],
                     "datestamp": hprow["datestamp"],
-                    "category": hprow["category"]    
+                    "category": hprow["category"]
                 })
-                try: 
+                try:
                     hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
                 except:
                     hpgrand_ptotal = 0
-                    break    
+                    break
             srows = db.execute("""SELECT symbol,stock_name, SUM(shares) as totalShares
             FROM history
             WHERE user_id = :user_id
@@ -257,12 +257,12 @@ def personal():
                     "price": usd(stock["price"]),
                     "total": usd(stock["price"] * row["totalShares"])
                 })
-                sgrand_stotal = sgrand_stotal + stock["price"] * row["totalShares"]  
-            
+                sgrand_stotal = sgrand_stotal + stock["price"] * row["totalShares"]
+
             try:
                 stockmoney = int (sgrand_stotal)
             except:
-                stockmoney = 0    
+                stockmoney = 0
 
             # all personal spending table ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal),hpspendings=hpspendings,hpgrand_total = usd(hpgrand_ptotal),total_spending=usd(total_spending),stockmoney=usd(stockmoney))
@@ -277,7 +277,7 @@ def personaldelete(pid):
     amount = amount[0]["amount"]
     print(cash)
     print(amount)
-    updated_cash = cash + amount 
+    updated_cash = cash + amount
     if updated_cash <0:
         return apology("cant afford")
     db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
@@ -285,8 +285,8 @@ def personaldelete(pid):
     db.execute("DELETE FROM  paymenthistory WHERE pid=:pid",pid=pid)
 
     flash("Deleted!!")
-    return redirect("/personal") 
-     
+    return redirect("/personal")
+
 
 @app.route("/personal/update/<int:pid>",methods=["GET", "POST"])
 @login_required
@@ -303,8 +303,8 @@ def personalupdate(pid):
         elif not update_amount:
             return apology("Missing number of shares!")
         elif int(update_amount)<= 0:
-            return apology("enter a proper value")    
-        else:  
+            return apology("enter a proper value")
+        else:
             rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
             amount = db.execute("SELECT amount FROM personal WHERE pid=:pid",pid=pid)
             print("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
@@ -312,14 +312,14 @@ def personalupdate(pid):
             print(rows)
             cash = rows[0]["cash"]
             amount = amount[0]["amount"]
-            updated_cash = (cash + amount) - update_amount 
+            updated_cash = (cash + amount) - update_amount
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("UPDATE personal SET user_id=:user_id,amount=:amount,commodity=:commodity WHERE pid=:pid",user_id=session["user_id"],amount=update_amount,commodity=update_commodity,pid=pid)
             db.execute("UPDATE paymenthistory SET amount=:amount,paymentpurpose=:paymentpurpose WHERE pid=:pid ",amount=update_amount,paymentpurpose=update_commodity,pid=pid)
             flash("updated!!")
-            return redirect("/personal")  
+            return redirect("/personal")
     else:
-        return apology("UNDApakuru") 
+        return apology("UNDApakuru")
 
 
 @app.route("/education",methods=["GET", "POST"])
@@ -342,15 +342,15 @@ def education():
         elif not amount:
             return apology("Missing number of shares!")
         elif int(amount)<= 0:
-            return apology("enter a proper value")    
-        else:  
+            return apology("enter a proper value")
+        else:
             rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
             cash = rows[0]["cash"]
-            updated_cash = cash - amount 
+            updated_cash = cash - amount
             if updated_cash <0:
                 return apology("cant afford")
-            today = date.today() 
-            duedate = add_months(today,period)   
+            today = date.today()
+            duedate = add_months(today,period)
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO education (user_id,epurpose,amount,period,duedate,category) VALUES (:user_id,:epurpose,:amount,:period,:duedate,:category)",user_id=session["user_id"],epurpose=epurpose,amount=amount,period=period,duedate=duedate,category=category)
             temp_eid=db.execute("SELECT eid FROM education ORDER BY eid DESC LIMIT 1")
@@ -358,16 +358,16 @@ def education():
             db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category,eid) VALUES (:user_id,:amount,:paymentpurpose,:category,:eid)",user_id=session["user_id"],amount=amount,paymentpurpose=epurpose,category=category,eid=temp_eid)
 
             flash("Educated!!")
-            return redirect("/education") 
+            return redirect("/education")
     else:
-            today = str(date.today()) 
+            today = str(date.today())
             print(" PERSONAL TOODAY: ",today)
             today = today.split('-')
             print("SPLITEED",today)
 
             today_year = today[0]
             today_month= today[1]
-            erows = db.execute("""SELECT eid,epurpose,amount,period,datestamp,duedate,status,category 
+            erows = db.execute("""SELECT eid,epurpose,amount,period,datestamp,duedate,status,category
             FROM education
             WHERE user_id = :user_id AND  strftime('%m', datestamp) = :today_month AND strftime('%Y', datestamp) = :today_year
             ORDER BY eid;
@@ -379,18 +379,18 @@ def education():
                     "eid": erow["eid"],
                     "epurpose": erow["epurpose"],
                     "amount": erow["amount"],
-                    "period": erow["period"],  
-                    "datestamp": erow["datestamp"], 
+                    "period": erow["period"],
+                    "datestamp": erow["datestamp"],
                     "duedate": erow["duedate"],
                     "status" : erow["status"],
                     "category": erow["category"]
-                }) 
+                })
                 grand_etotal = grand_etotal + erow["amount"]
-            cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"]) 
-            cash = cash[0]["cash"]   
+            cash = db.execute("SELECT cash FROM users WHERE id=:user_id",user_id=session["user_id"])
+            cash = cash[0]["cash"]
             today=str(date.today())
             # EDucation display ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            hprows = db.execute("""SELECT pay_id,paymentpurpose,amount,datestamp,category 
+            hprows = db.execute("""SELECT pay_id,paymentpurpose,amount,datestamp,category
             FROM paymenthistory
             WHERE user_id = :user_id AND category != "personal"
             ORDER BY pay_id;
@@ -403,8 +403,8 @@ def education():
                     "paymentpurpose": hprow["paymentpurpose"],
                     "amount": hprow["amount"],
                     "datestamp": hprow["datestamp"],
-                    "category": hprow["category"]    
-                }) 
+                    "category": hprow["category"]
+                })
                 hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
             srows = db.execute("""SELECT symbol,stock_name, SUM(shares) as totalShares
             FROM history
@@ -425,7 +425,7 @@ def education():
                     "price": usd(stock["price"]),
                     "total": usd(stock["price"] * row["totalShares"])
                 })
-                sgrand_stotal = sgrand_stotal + stock["price"] * row["totalShares"]                              
+                sgrand_stotal = sgrand_stotal + stock["price"] * row["totalShares"]
             #  Education display +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today,hpspendings=hpspendings,hpgrand_ptotal=usd(hpgrand_ptotal),stockmoney=usd(sgrand_stotal))
 
@@ -443,13 +443,13 @@ def educationedit(eid):
         update_datestamp = request.form.get("update_datestamp")
         update_category = request.form.get("update_category")
         print("++++++++++++++++++",update_category)
-        
+
         try:
-            update_status = int(request.form.get("updatestatus"))   
-                
+            update_status = int(request.form.get("updatestatus"))
+
         except:
-            update_status = 1 
-        
+            update_status = 1
+
         print("STATUS******",update_status)
         try:
             update_amount = int(update_amount)
@@ -461,20 +461,20 @@ def educationedit(eid):
         elif not update_amount:
             return apology("Missing number of shares!")
         elif int(update_amount)<= 0:
-            return apology("enter a proper value")    
-        else:  
+            return apology("enter a proper value")
+        else:
             erowsD = db.execute("SELECT duedate FROM education WHERE eid=:eid",eid=eid)
             due_datestamp= erowsD[0]["duedate"].split('-')
             olddue_datestamp = datetime.date(int(due_datestamp[0]), int(due_datestamp[1]), int(due_datestamp[2]))
             update_datestamp= update_datestamp.split('-')
             update_datestamp = datetime.date(int(update_datestamp[0]), int(update_datestamp[1]), int(update_datestamp[2]))
-            today = date.today() 
-            update_duedate = add_months(update_datestamp,update_period)   
+            today = date.today()
+            update_duedate = add_months(update_datestamp,update_period)
             db.execute("UPDATE education SET user_id=:user_id,epurpose=:epurpose,amount=:amount,period=:period,datestamp=:update_datestamp,duedate=:duedate,status=:update_status,category=:update_category WHERE eid=:eid",user_id=session["user_id"],epurpose=update_epurpose,amount=update_amount,period=update_period,update_datestamp=update_datestamp,duedate=update_duedate,update_status=update_status,update_category=update_category,eid=eid)
             # db.execute("UPDATE paymenthistory SET amount=:amount,paymentpurpose=:paymentpurpose WHERE eid=:eid ",amount=update_amount,paymentpurpose=update_epurpose,eid=eid)
             flash("updated!!")
-            return redirect("/education")      
- 
+            return redirect("/education")
+
 
 @app.route("/education/pay/<int:eid>",methods=["GET", "POST"])
 @login_required
@@ -485,10 +485,10 @@ def educationupdate(eid):
         pay_datestamp = request.form.get("pay_datestamp")
         print("******************payment gateway")
         try:
-            pay_status = int(request.form.get("pay_status"))       
+            pay_status = int(request.form.get("pay_status"))
         except:
-            pay_status = 1 
-        
+            pay_status = 1
+
         print("STATUS******",pay_status)
         try:
             pay_amount = int(pay_amount)
@@ -497,8 +497,8 @@ def educationupdate(eid):
         if not pay_amount:
             return apology("Missing number of shares!")
         elif int(pay_amount)<= 0:
-            return apology("enter a proper value")    
-        else:  
+            return apology("enter a proper value")
+        else:
             erowsD = db.execute("SELECT duedate,period,epurpose,category FROM education WHERE eid=:eid",eid=eid)
             print(erowsD)
             pay_epurpose = erowsD[0]["epurpose"]
@@ -508,13 +508,13 @@ def educationupdate(eid):
             olddue_datestamp = datetime.date(int(due_datestamp[0]), int(due_datestamp[1]), int(due_datestamp[2]))
             pay_datestamp= pay_datestamp.split('-')
             pay_datestamp = datetime.date(int(pay_datestamp[0]), int(pay_datestamp[1]), int(pay_datestamp[2]))
-            today = date.today() 
-            pay_duedate = add_months(pay_datestamp,pay_period)   
+            today = date.today()
+            pay_duedate = add_months(pay_datestamp,pay_period)
             db.execute("UPDATE education SET user_id=:user_id,amount=:pay_amount,period=:pay_period,duedate=:pay_duedate,status=:pay_status WHERE eid=:eid",user_id=session["user_id"],pay_amount=pay_amount,pay_period=pay_period,pay_duedate=pay_duedate,pay_status=pay_status,eid=eid)
-            
+
             db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category,eid) VALUES (:user_id,:amount,:paymentpurpose,:category,:eid)",user_id=session["user_id"],amount=pay_amount,paymentpurpose=pay_epurpose,category=pay_category,eid=eid)
             flash("payment made!!")
-            return redirect("/education")  
+            return redirect("/education")
 
 @app.route("/stock/buy", methods=["GET", "POST"])
 @login_required
@@ -527,15 +527,15 @@ def buy():
         try:
             amount = int(amount)
         except:
-            return apology("not valid input")  
+            return apology("not valid input")
         print(amount)
         if not symbol:
             return apology("Missing stock symbol!")
         elif not amount:
             return apology("Missing number of shares!")
         elif int(amount)<= 0:
-            return apology("enter a proper value")    
-        else:  
+            return apology("enter a proper value")
+        else:
             stock = lookup(symbol)
             price = float(stock["price"])
             rows = db.execute("SELECT cash FROM users WHERE id=:id",id=session["user_id"])
@@ -546,7 +546,7 @@ def buy():
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO history (user_id,stock_name,shares,price,symbol) VALUES (:user_id,:stock_name,:shares,:price,:symbol)",user_id=session["user_id"],stock_name=stock['name'],shares=int(amount),price=stock['price'],symbol=symbol)
             flash("Bought!!")
-            return redirect("/stock")    
+            return redirect("/stock")
     else:
         return render_template("buystock.html")
 
@@ -571,7 +571,7 @@ def history():
             "time": transaction["time"]
         })
     return render_template("stockhistory.html",revealing=revealing)
-    
+
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -689,14 +689,14 @@ def sell():
         elif not amount:
             return apology("Missing number of shares!")
         elif int(amount)<= 0:
-            return apology("enter a proper value")    
+            return apology("enter a proper value")
         else:
             amount = int(amount)
             stock = lookup(symbol)
             if stock is None:
                 return apology("invalid symbol")
 
-            rows = db.execute(""" 
+            rows = db.execute("""
                         SELECT symbol,SUM(shares) as totalShares
                         FROM history
                         WHERE user_id=:user_id
@@ -717,10 +717,10 @@ def sell():
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO history (user_id,stock_name,shares,price,symbol) VALUES (:user_id,:stock_name,:shares,:price,:symbol)",user_id=session["user_id"],stock_name=stock['name'],shares= -1*int(amount),price=stock['price'],symbol=symbol)
             flash("Sold!!")
-            return redirect("/stock") 
+            return redirect("/stock")
     else:
 
-        rows = db.execute(""" 
+        rows = db.execute("""
         SELECT symbol FROM history WHERE user_id=:user_id GROUP BY symbol HAVING SUM(shares) >0;
         """, user_id=session["user_id"])
         return render_template("sellstock.html", symbols = [row["symbol"] for row in rows])
