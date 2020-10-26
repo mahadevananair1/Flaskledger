@@ -34,7 +34,6 @@ help50==3.0.1
 html5lib==1.1
 icdiff==1.9.1
 idna==2.10
-ikp3db==1.4.3
 importlib-metadata==2.0.0
 intervaltree==2.1.0
 isort==5.6.4
