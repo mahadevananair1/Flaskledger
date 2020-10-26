@@ -94,8 +94,19 @@ set FLASK_APP=app.py
 
 flask run
 
+## Pictures
 
+# Login
+![alt text](https://drive.google.com/file/d/1MTyI80G6CzKhKDWvZlDbCgyPEYkGd_-T/view?usp=sharing?raw=true)
 
+# Register
+![alt text](https://drive.google.com/file/d/1f-d7Wn4Z6MFG52FWZDj4Mdury120uvoM/view?usp=sharing?raw=true)
+
+# Personal Spendings
+![alt text](https://drive.google.com/file/d/1Ix-4VeMP3qo3ZIEm_HwhIE-joFf-Vqmn/view?usp=sharing?raw=true)
+
+# Monthly Bills
+![alt text](https://drive.google.com/file/d/1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M/view?usp=sharing?raw=true)
 
 
 
