@@ -717,7 +717,7 @@ def sell():
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO history (user_id,stock_name,shares,price,symbol) VALUES (:user_id,:stock_name,:shares,:price,:symbol)",user_id=session["user_id"],stock_name=stock['name'],shares= -1*int(amount),price=stock['price'],symbol=symbol)
             flash("Sold!!")
-            return redirect("/") 
+            return redirect("/stock") 
     else:
 
         rows = db.execute(""" 
