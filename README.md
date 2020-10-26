@@ -1,5 +1,5 @@
 
-![alt text](https://github.com/mahadevananair1/Flaskledger/blob/main/static/Track my Dollar.png?raw=true)
+![alt text](https://trackmydollar.herokuapp.com/static/Track%20my%20Dollar.png?raw=true)
 
   <h3 align="center">Track My Dollar Flask App</h3>
 
