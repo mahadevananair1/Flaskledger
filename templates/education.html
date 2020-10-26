@@ -1,5 +1,10 @@
 {% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block main %}
-
+<div class="jumbotron jumbotron-fluid" style="background: rgba(0,0,0,0.5);color:aliceblue">
+    <div class="container">
+        <h1 class="display-4">Monthly Bills and Charges</h1>
+        <p class="lead">Bills that one neeeds to pay before deadlines Regularly are shown here</p>
+    </div>
+</div>
 
 <div class="card-group">
     <div class="card text-white bg-dark mb-3" style="max-width: 18rem; margin: 10px;">
@@ -23,7 +28,7 @@
     <div class="card  bg-warning mb-3" style="max-width: 18rem; margin: 10px;">
         <div class="card-header">Money in Stock</div>
         <div class="card-body">
-            <i class="far fa-address-book" style="font-size: xx-large;"></i>
+            <i class="fas fa-briefcase" style="font-size: xx-large;"></i>
             <span><h5 class="card-title">{{stockmoney}}</h5></span>
         </div>
     </div>
@@ -130,12 +135,11 @@
     <table class="table table-striped  table-hover table-primay">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">Eid</th>
-                <th scope="col">Epurpose</th>
+                <th scope="col">Bill</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Period</th>
+                <th scope="col">Period(Months)</th>
                 <th scope="col">DatePaid</th>
-                <th scope="col">NExtDAte</th>
+                <th scope="col">Nextduedate</th>
                 <th scope="col">Category</th>
                 <th scope="col">Actions</th>
 
@@ -144,7 +148,6 @@
         <tbody>
             {% for espending in espendings: %}
             <tr>
-                <th scope="row">{{espending["eid"]}}</th>
                 <td>{{espending["epurpose"]}}</td>
                 <td>{{espending["amount"]}}</td>
                 <td>{{espending["period"]}}</td>
@@ -267,8 +270,7 @@
     <table class="table table-striped  table-hover">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">Eid</th>
-                <th scope="col">Epurpose</th>
+                <th scope="col">Bill</th>
                 <th scope="col">Amount</th>
                 <th scope="col">DatePaid</th>
                 <th scope="col">Category</th>
@@ -276,7 +278,6 @@
         </thead>
         {% for hpspending in hpspendings: %}
         <tr>
-            <th scope="row">{{hpspending["payid"]}}</th>
             <td>{{hpspending["paymentpurpose"]}}</td>
             <td>{{hpspending["amount"]}}</td>
             <td>{{hpspending["datestamp"]}}</td>

@@ -1,5 +1,11 @@
 {% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block main %}
-<h1 class="display-1 " style="margin: 20px;">History of all Stock Dealings</h1>
+<div class="jumbotron jumbotron-fluid" style="background: rgba(0,0,0,0.5);color:aliceblue">
+    <div class="container">
+        <h1 class="display-4">History of all Stock Dealings</h1>
+        <p class="lead">All dealings related to stock shown here</p>
+    </div>
+</div>
+
 <main class="container">
     <table class="table table-striped  table-hover">
         <thead class="thead-dark">
@@ -27,7 +33,9 @@
 
 
 </main>
-
+<footer class="small text-center text-muted">
+    Data provided for free by <a href="https://iextrading.com/developer">IEX</a>. View <a href="https://iextrading.com/api-exhibit-a/">IEX’s Terms of Use</a>.
+</footer>
 
 
 {% endblock %}

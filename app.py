@@ -238,15 +238,29 @@ def personal():
                 except:
                     hpgrand_ptotal = 0
                     break    
-            stockmoney = db.execute("""SELECT SUM(price) ,SUM(shares) as totalShares
-                                        FROM history
-                                        WHERE user_id = :user_id
-                                        GROUP BY stock_name
-                                        HAVING totalShares >0;
-                                        """,user_id=session['user_id'])
+            srows = db.execute("""SELECT symbol,stock_name, SUM(shares) as totalShares
+            FROM history
+            WHERE user_id = :user_id
+            GROUP BY stock_name
+            HAVING totalShares >0;
+            """,user_id=session['user_id'])
+            holdings = []
+            sgrand_stotal = 0
+            for row in srows:
+                symbolic = row["symbol"]
+                print(symbolic)
+                stock = lookup(symbolic)
+                holdings.append({
+                    "stock": row["symbol"].upper(),
+                    "name": row["stock_name"],
+                    "shares": row["totalShares"],
+                    "price": usd(stock["price"]),
+                    "total": usd(stock["price"] * row["totalShares"])
+                })
+                sgrand_stotal = sgrand_stotal + stock["price"] * row["totalShares"]  
             
             try:
-                stockmoney = int (stockmoney[0]['SUM(price)'])
+                stockmoney = int (sgrand_stotal)
             except:
                 stockmoney = 0    
 
@@ -392,18 +406,28 @@ def education():
                     "category": hprow["category"]    
                 }) 
                 hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
-            stockmoney = db.execute("""SELECT SUM(price) ,SUM(shares) as totalShares
-                                        FROM history
-                                        WHERE user_id = :user_id
-                                        GROUP BY stock_name
-                                        HAVING totalShares >0;
-                                        """,user_id=session['user_id'])
-            try:
-                stockmoney = int (stockmoney[0]['SUM(price)'])
-            except:
-                stockmoney = 0                             
+            srows = db.execute("""SELECT symbol,stock_name, SUM(shares) as totalShares
+            FROM history
+            WHERE user_id = :user_id
+            GROUP BY stock_name
+            HAVING totalShares >0;
+            """,user_id=session['user_id'])
+            holdings = []
+            sgrand_stotal = 0
+            for row in srows:
+                symbolic = row["symbol"]
+                print(symbolic)
+                stock = lookup(symbolic)
+                holdings.append({
+                    "stock": row["symbol"].upper(),
+                    "name": row["stock_name"],
+                    "shares": row["totalShares"],
+                    "price": usd(stock["price"]),
+                    "total": usd(stock["price"] * row["totalShares"])
+                })
+                sgrand_stotal = sgrand_stotal + stock["price"] * row["totalShares"]                              
             #  Education display +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today,hpspendings=hpspendings,hpgrand_ptotal=hpgrand_ptotal,stockmoney=stockmoney)
+            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today,hpspendings=hpspendings,hpgrand_ptotal=usd(hpgrand_ptotal),stockmoney=usd(sgrand_stotal))
 
 
 

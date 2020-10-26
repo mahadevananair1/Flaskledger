@@ -1,5 +1,11 @@
 {% extends "layout.html" %} {% block title %} Quote {% endblock %} {% block main %}
-<h1 class="display-1 " style="margin: 20px;">Query Stock Price</h1>
+<div class="jumbotron jumbotron-fluid" style="background: rgba(0,0,0,0.5);color:aliceblue">
+    <div class="container">
+        <h1 class="display-4">Query Stock Price</h1>
+        <p class="lead">Get Current Stock price of any NASDAQ listed company using NASDAQ code</p>
+    </div>
+</div>
+
 <main class="container">
     <form action="/stock/quote" method="post">
         <div class="form-group">
@@ -8,5 +14,7 @@
         <button class="btn btn-primary" type="submit">Find</button>
     </form>
 </main>
-
+<footer class="small text-center text-muted">
+    Data provided for free by <a href="https://iextrading.com/developer">IEX</a>. View <a href="https://iextrading.com/api-exhibit-a/">IEX’s Terms of Use</a>.
+</footer>
 {% endblock %}

@@ -1,7 +1,16 @@
  {% extends "layout.html" %} {% block title %} Quoted {% endblock %} {% block main %}
+<div class="jumbotron jumbotron-fluid" style="background: rgba(0,0,0,0.5);color:aliceblue">
+    <div class="container">
+        <h1 class="display-4">Stock Price</h1>
+        <p class="lead">{{stock['name']}}<br>{{stock['price']}}</p>
+    </div>
+</div>
 <main class="container">
     <p>
         The price of one share of {{stock['name']}} is : {{stock['price']}}.
     </p>
+    <footer class="small text-center text-muted">
+        Data provided for free by <a href="https://iextrading.com/developer">IEX</a>. View <a href="https://iextrading.com/api-exhibit-a/">IEX’s Terms of Use</a>.
+    </footer>
 </main>
 {% endblock %}

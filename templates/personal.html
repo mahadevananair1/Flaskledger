@@ -6,7 +6,12 @@
 <!-- CARDS CARDS &********************&%*%^$%%$%$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 <!-- CARDS CARDS &********************&%*%^$%%$%$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 <!-- CARDS CARDS &********************&%*%^$%%$%$%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
-
+<div class="jumbotron jumbotron-fluid" style="background: rgba(0,0,0,0.5);color:aliceblue">
+    <div class="container">
+        <h1 class="display-4">Personal Spendings</h1>
+        <p class="lead">All personal Spendings are displayed here</p>
+    </div>
+</div>
 <div class="card-group">
     <div class="card text-white bg-dark mb-3" style="max-width: 18rem; margin: 10px;">
         <div class="card-header">Wallet</div>
@@ -27,7 +32,7 @@
     <div class="card  bg-warning mb-3" style="max-width: 18rem; margin: 10px;">
         <div class="card-header">Money in Stocks</div>
         <div class="card-body">
-            <i class="far fa-calendar-alt" style="font-size: xx-large;"></i>
+            <i class="fas fa-briefcase" style="font-size: xx-large;"></i>
             <span><h5 class="card-title">{{stockmoney}}</h5></span>
         </div>
     </div>
@@ -168,17 +173,15 @@
     <table class="table table-striped table-hover ">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">Pid</th>
-                <th scope="col">Commodity</th>
+                <th scope="col">Spending</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Time</th>
+                <th scope="col">Date</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for pspending in pspendings: %}
             <tr>
-                <th scope="row">{{pspending["pid"]}}</th>
                 <td>{{pspending["commodity"]}}</td>
                 <td>{{pspending["amount"]}}</td>
                 <td>{{pspending["time"]}}</td>
@@ -250,22 +253,19 @@
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">Pid</th>
-                <th scope="col">Commodity</th>
+                <th scope="col">Spending</th>
                 <th scope="col">Amount</th>
-                <th scope="col">Time</th>
-                <th scope="col">Actions</th>
+                <th scope="col">Date</th>
+                <th scope="col">Category</th>
             </tr>
         </thead>
         <tbody>
             {% for hpspending in hpspendings: %}
             <tr>
-                <th scope="row">{{hpspending["payid"]}}</th>
                 <td>{{hpspending["paymentpurpose"]}}</td>
                 <td>{{hpspending["amount"]}}</td>
                 <td>{{hpspending["datestamp"]}}</td>
                 <td>{{hpspending["category"]}}</td>
-                <td>{{hpgrand_ptotal}}</td>
             </tr>
             {% endfor %}
         </tbody>
