@@ -39,8 +39,8 @@ Session(app)
 db = SQL("sqlite:///finance.db")
 
 # Make sure API key is set
-if not os.environ.get("API_KEY"):
-    raise RuntimeError("API_KEY not set")
+# if not os.environ.get("API_KEY"):
+#     raise RuntimeError("API_KEY not set")
 
 def add_months(sourcedate, months):
     month = sourcedate.month - 1 + months
@@ -51,11 +51,10 @@ def add_months(sourcedate, months):
 
 
 
-# @app.route("/")
-# @login_required
-# def index():
-#     """Show portfolio of ALL SPENDINGS """
-#     return apology("TODO")
+@app.route("/")
+@login_required
+def index():
+    return redirect("/login")
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
