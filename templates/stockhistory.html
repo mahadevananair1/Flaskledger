@@ -1,36 +1,32 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block title %} Log In {% endblock %} {% block main %}
+<h1 class="display-1 " style="margin: 20px;">History of all Stock Dealings</h1>
+<main class="container">
+    <table class="table table-striped  table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Symbol</th>
+                <th scope="col">Name</th>
+                <th scope="col">No of Shares</th>
+                <th scope="col">Price per Share</th>
+                <th scope="col">DateTime</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reveal in revealing: %}
+            <tr>
+                <th scope="row">{{reveal["symbol"].upper()}}</th>
+                <td>{{reveal["name"]}}</td>
+                <td>{{reveal["shares"]}}</td>
+                <td>{{reveal["price"]}}</td>
+                <td>{{reveal["time"]}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
 
-{% block title %}
-    Log In
-{% endblock %}
-
-{% block main %}
-<table class="table table-striped  table-hover">
-    <thead class="thead-dark">
-        <tr>
-          <th scope="col">Symbol</th>
-          <th scope="col">Name</th>
-          <th scope="col">No of Shares</th>
-          <th scope="col">Price per Share</th>
-          <th scope="col">DateTime</th>
-        </tr>
-      </thead>
-    <tbody>
-        {% for reveal in revealing: %}
-        <tr>
-            <th scope="row">{{reveal["symbol"].upper()}}</th>
-            <td>{{reveal["name"]}}</td>
-            <td>{{reveal["shares"]}}</td>
-            <td>{{reveal["price"]}}</td> 
-            <td>{{reveal["time"]}}</td> 
-        </tr>
-        {% endfor %}    
-    </tbody>
-   
-</table>
+    </table>
 
 
-
+</main>
 
 
 

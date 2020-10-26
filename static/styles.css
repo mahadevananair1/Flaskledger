@@ -12,6 +12,12 @@ nav .navbar-brand {
     margin-bottom: 20px;
 }
 
+body {
+    background-image: url("/static/background.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 
 /* colors for brand */
 

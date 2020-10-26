@@ -1,14 +1,12 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block title %} Quote {% endblock %} {% block main %}
+<h1 class="display-1 " style="margin: 20px;">Query Stock Price</h1>
+<main class="container">
+    <form action="/stock/quote" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="stock" type="text">
+        </div>
+        <button class="btn btn-primary" type="submit">Find</button>
+    </form>
+</main>
 
-{% block title %}
-    Quote
-{% endblock %}
-
-{% block main %}
-<form action="/stock/quote" method="post">
-    <div class="form-group">
-        <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="stock" type="text">
-    </div>
-    <button class="btn btn-primary" type="submit">Find</button>
-</form>
 {% endblock %}

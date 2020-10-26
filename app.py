@@ -51,25 +51,24 @@ def add_months(sourcedate, months):
 
 
 
-@app.route("/")
-@login_required
-def index():
-    """Show portfolio of ALL SPENDINGS """
-    return apology("TODO")
+# @app.route("/")
+# @login_required
+# def index():
+#     """Show portfolio of ALL SPENDINGS """
+#     return apology("TODO")
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add_funds():
-
     if request.method == "POST":
         try:
             amount = float(request.form.get("amount"))
         except:
             return apology("amount must be a real number", 400)
-
+        print("DVJDSOVWOSHJVOWHSVOSHJVOJVODSJOVJWDVHOSDGJV")
         db.execute("UPDATE users SET cash = cash + :amount WHERE id = :user_id", user_id=session["user_id"], amount=amount)
 
-        return redirect("/")
+        return redirect("/personal")
     else:
         return render_template("add_funds.html")
 
@@ -178,6 +177,7 @@ def personal():
             flash("Bought!!")
             return redirect("/personal") 
     else:
+        
             today = str(date.today()) 
             print(" PERSONAL TOODAY: ",today)
             today = today.split('-')
@@ -202,8 +202,11 @@ def personal():
                     "amount": prow["amount"],
                     "time": prow["time"],    
                 }) 
-                
-                grand_ptotal = grand_ptotal + prow["amount"]
+                try:
+                    grand_ptotal = grand_ptotal + prow["amount"]
+                except:
+                    grand_ptotal = 0
+                    break    
 
 
             sums = db.execute("""SELECT sum(amount)
@@ -230,10 +233,26 @@ def personal():
                     "amount": hprow["amount"],
                     "datestamp": hprow["datestamp"],
                     "category": hprow["category"]    
-                }) 
-                hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
+                })
+                try: 
+                    hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
+                except:
+                    hpgrand_ptotal = 0
+                    break    
+            stockmoney = db.execute("""SELECT SUM(price) ,SUM(shares) as totalShares
+                                        FROM history
+                                        WHERE user_id = :user_id
+                                        GROUP BY stock_name
+                                        HAVING totalShares >0;
+                                        """,user_id=session['user_id'])
+            
+            try:
+                stockmoney = int (stockmoney[0]['SUM(price)'])
+            except:
+                stockmoney = 0    
+
             # all personal spending table ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal),hpspendings=hpspendings,hpgrand_total = hpgrand_ptotal,total_spending=usd(total_spending))
+            return render_template("personal.html",pspendings=pspendings, cash =usd(cash), grand_ptotal=usd(grand_ptotal),hpspendings=hpspendings,hpgrand_total = usd(hpgrand_ptotal),total_spending=usd(total_spending),stockmoney=usd(stockmoney))
 
 @app.route("/personal/delete/<int:pid>")
 @login_required
@@ -374,8 +393,18 @@ def education():
                     "category": hprow["category"]    
                 }) 
                 hpgrand_ptotal = hpgrand_ptotal + hprow["amount"]
+            stockmoney = db.execute("""SELECT SUM(price) ,SUM(shares) as totalShares
+                                        FROM history
+                                        WHERE user_id = :user_id
+                                        GROUP BY stock_name
+                                        HAVING totalShares >0;
+                                        """,user_id=session['user_id'])
+            try:
+                stockmoney = int (stockmoney[0]['SUM(price)'])
+            except:
+                stockmoney = 0                             
             #  Education display +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today,hpspendings=hpspendings,hpgrand_ptotal=hpgrand_ptotal)
+            return render_template("education.html",espendings=espendings, cash =usd(cash), grand_etotal=usd(grand_etotal),today=today,hpspendings=hpspendings,hpgrand_ptotal=hpgrand_ptotal,stockmoney=stockmoney)
 
 
 
@@ -552,7 +581,7 @@ def login():
         session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
-        return redirect("/")
+        return redirect("/personal")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -567,7 +596,7 @@ def logout():
     session.clear()
 
     # Redirect user to login form
-    return redirect("/")
+    return redirect("/login")
 
 
 @app.route("/stock/quote", methods=["GET", "POST"])
@@ -613,7 +642,7 @@ def register():
             session["user_id"] = register
 
             # Redirect user to home page
-            return redirect("/")
+            return redirect("/login")
         return apology(text)
     else:
         return render_template("register.html")

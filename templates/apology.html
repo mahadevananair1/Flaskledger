@@ -1,9 +1,6 @@
-{% extends "layout.html" %}
-
-{% block title %}
-    Apology
-{% endblock %}
-
-{% block main %}
+{% extends "layout.html" %} {% block title %} Apology {% endblock %} {% block main %}
+<main class="container">
+    <h1 class="display-1 " style="margin: 20px;">ERROR :(</h1>
     <img alt="{{ top }}" class="border" src="http://memegen.link/custom/{{ top | urlencode }}/{{ bottom | urlencode }}.jpg?alt=https://i.imgur.com/CsCgN7Ll.png" title="{{ top }}">
+</main>
 {% endblock %}

@@ -1,12 +1,7 @@
-  
-{% extends "layout.html" %}
-
-{% block title %}
-    Quoted
-{% endblock %}
-
-{% block main %}
+ {% extends "layout.html" %} {% block title %} Quoted {% endblock %} {% block main %}
+<main class="container">
     <p>
         The price of one share of {{stock['name']}} is : {{stock['price']}}.
     </p>
+</main>
 {% endblock %}
