@@ -1,5 +1,5 @@
 
-
+![alt text](https://github.com/mahadevananair1/Flaskledger/blob/main/static/Track my Dollar.png?raw=true)
 
   <h3 align="center">Track My Dollar Flask App</h3>
 
@@ -63,6 +63,18 @@ This is an example of how to list things you need to use the software and how to
 ```sh
 pip install flask
 ```
+* flask-sessions
+```sh
+pip install flask-sessions
+```
+* requests
+```sh
+pip install requests
+```
+* cs50
+```sh
+pip install cs50
+```
 
 ### Installation
 
@@ -78,16 +90,12 @@ pip install flask
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Flask run
+set FLASK_APP=app.py
+
+flask run
 
 
 
-<!-- ROADMAP -->
-
-
-
-
-<!-- CONTRIBUTING -->
 
 
 
