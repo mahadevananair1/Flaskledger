@@ -97,17 +97,17 @@ flask run
 # Pictures
 
 ## Login
-<a href="https://drive.google.com/uc?export=view&id=1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M"><img src="https://drive.google.com/uc?export=view&id=1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M" style="width: 650px; max-width: 100%; height: auto" title="Click to enlarge picture" />
-![alt text](https://drive.google.com/file/d/1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M/view?raw=true)
+<a href="https://drive.google.com/uc?export=view&id=1MTyI80G6CzKhKDWvZlDbCgyPEYkGd_-T"><img src="https://drive.google.com/uc?export=view&id=1MTyI80G6CzKhKDWvZlDbCgyPEYkGd_-T" style="width: 650px; max-width: 100%; height: auto" title="Click to enlarge picture" />
+
 
 ## Register
-![alt text](https://drive.google.com/file/d/1f-d7Wn4Z6MFG52FWZDj4Mdury120uvoM/view?usp=sharing?raw=true)
-
-## Personal Spendings
-![alt text](https://drive.google.com/file/d/1Ix-4VeMP3qo3ZIEm_HwhIE-joFf-Vqmn/view?usp=sharing?raw=true)
+<a href="https://drive.google.com/uc?export=view&id=1f-d7Wn4Z6MFG52FWZDj4Mdury120uvoM"><img src="https://drive.google.com/uc?export=view&id=1f-d7Wn4Z6MFG52FWZDj4Mdury120uvoM" style="width: 650px; max-width: 100%; height: auto" title="Click to enlarge picture" />
 
 ## Monthly Bills
-![alt text](https://drive.google.com/file/d/1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M/view?usp=sharing?raw=true)
+<a href="https://drive.google.com/uc?export=view&id=1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M"><img src="https://drive.google.com/uc?export=view&id=1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M" style="width: 650px; max-width: 100%; height: auto" title="Click to enlarge picture" />
+
+## Personal Spendings
+<a href="https://drive.google.com/uc?export=view&id=1Ix-4VeMP3qo3ZIEm_HwhIE-joFf-Vqmn"><img src="https://drive.google.com/uc?export=view&id=1Ix-4VeMP3qo3ZIEm_HwhIE-joFf-Vqmn" style="width: 650px; max-width: 100%; height: auto" title="Click to enlarge picture" />
 
 
 
