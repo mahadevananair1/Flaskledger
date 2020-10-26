@@ -1,11 +1,5 @@
-# Flaskledger
 
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="static/[Track my Dollar.png](https://github.com/mahadevananair1/Flaskledger/blob/main/static/Track%20my%20Dollar.png "Track my Dollar.png")" alt="Logo" width="80" height="80">
-  </a>
+
 
   <h3 align="center">Track My Dollar Flask App</h3>
 
