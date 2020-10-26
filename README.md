@@ -97,6 +97,7 @@ flask run
 # Pictures
 
 ## Login
+<a href="https://drive.google.com/uc?export=view&id=1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M"><img src="https://drive.google.com/uc?export=view&id=1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M" style="width: 650px; max-width: 100%; height: auto" title="Click to enlarge picture" />
 ![alt text](https://drive.google.com/file/d/1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M/view?raw=true)
 
 ## Register
