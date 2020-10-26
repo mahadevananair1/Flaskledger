@@ -31,7 +31,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+
 
 Handling and tracking usage of money is becoming a tough task for an average person
 with various subscriptions daily purchases, online shopping, and even stock trading apps
