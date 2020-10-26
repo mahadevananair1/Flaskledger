@@ -321,16 +321,25 @@ def education():
             duedate = add_months(today,period)   
             db.execute("UPDATE users SET cash=:updated_cash WHERE id=:id",updated_cash=updated_cash,id=session["user_id"])
             db.execute("INSERT INTO education (user_id,epurpose,amount,period,duedate,category) VALUES (:user_id,:epurpose,:amount,:period,:duedate,:category)",user_id=session["user_id"],epurpose=epurpose,amount=amount,period=period,duedate=duedate,category=category)
-            db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category) VALUES (:user_id,:amount,:paymentpurpose,:category)",user_id=session["user_id"],amount=amount,paymentpurpose=epurpose,category=category)
+            temp_eid=db.execute("SELECT eid FROM education ORDER BY eid DESC LIMIT 1")
+            temp_eid=temp_eid[0]["eid"]
+            db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category,eid) VALUES (:user_id,:amount,:paymentpurpose,:category,:eid)",user_id=session["user_id"],amount=amount,paymentpurpose=epurpose,category=category,eid=temp_eid)
 
             flash("Educated!!")
             return redirect("/education") 
     else:
+            today = str(date.today()) 
+            print(" PERSONAL TOODAY: ",today)
+            today = today.split('-')
+            print("SPLITEED",today)
+
+            today_year = today[0]
+            today_month= today[1]
             erows = db.execute("""SELECT eid,epurpose,amount,period,datestamp,duedate,status,category 
             FROM education
-            WHERE user_id = :user_id
+            WHERE user_id = :user_id AND  strftime('%m', datestamp) = :today_month AND strftime('%Y', datestamp) = :today_year
             ORDER BY eid;
-            """,user_id=session['user_id'])
+            """,user_id=session['user_id'],today_month=str(today_month),today_year=str(today_year))
             espendings = []
             grand_etotal =0
             for erow in erows:
@@ -410,6 +419,7 @@ def educationedit(eid):
             today = date.today() 
             update_duedate = add_months(update_datestamp,update_period)   
             db.execute("UPDATE education SET user_id=:user_id,epurpose=:epurpose,amount=:amount,period=:period,datestamp=:update_datestamp,duedate=:duedate,status=:update_status,category=:update_category WHERE eid=:eid",user_id=session["user_id"],epurpose=update_epurpose,amount=update_amount,period=update_period,update_datestamp=update_datestamp,duedate=update_duedate,update_status=update_status,update_category=update_category,eid=eid)
+            # db.execute("UPDATE paymenthistory SET amount=:amount,paymentpurpose=:paymentpurpose WHERE eid=:eid ",amount=update_amount,paymentpurpose=update_epurpose,eid=eid)
             flash("updated!!")
             return redirect("/education")      
  
@@ -437,8 +447,10 @@ def educationupdate(eid):
         elif int(pay_amount)<= 0:
             return apology("enter a proper value")    
         else:  
-            erowsD = db.execute("SELECT duedate,period FROM education WHERE eid=:eid",eid=eid)
+            erowsD = db.execute("SELECT duedate,period,epurpose,category FROM education WHERE eid=:eid",eid=eid)
             print(erowsD)
+            pay_epurpose = erowsD[0]["epurpose"]
+            pay_category = erowsD[0]["category"]
             pay_period = erowsD[0]["period"]
             due_datestamp= erowsD[0]["duedate"].split('-')
             olddue_datestamp = datetime.date(int(due_datestamp[0]), int(due_datestamp[1]), int(due_datestamp[2]))
@@ -447,6 +459,8 @@ def educationupdate(eid):
             today = date.today() 
             pay_duedate = add_months(pay_datestamp,pay_period)   
             db.execute("UPDATE education SET user_id=:user_id,amount=:pay_amount,period=:pay_period,duedate=:pay_duedate,status=:pay_status WHERE eid=:eid",user_id=session["user_id"],pay_amount=pay_amount,pay_period=pay_period,pay_duedate=pay_duedate,pay_status=pay_status,eid=eid)
+            
+            db.execute("INSERT INTO paymenthistory (user_id,amount,paymentpurpose,category,eid) VALUES (:user_id,:amount,:paymentpurpose,:category,:eid)",user_id=session["user_id"],amount=pay_amount,paymentpurpose=pay_epurpose,category=pay_category,eid=eid)
             flash("payment made!!")
             return redirect("/education")  
 
