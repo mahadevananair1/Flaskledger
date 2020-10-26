@@ -97,7 +97,7 @@ flask run
 # Pictures
 
 ## Login
-![alt text](https://drive.google.com/file/d/1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M/view?usp=sharing?raw=true)
+![alt text](https://drive.google.com/uc?export=view&id=1gZf6UkeSLd7O77p3ZWsW5lIOm-vFhC5M/view?usp=sharing?raw=true)
 
 ## Register
 ![alt text](https://drive.google.com/file/d/1f-d7Wn4Z6MFG52FWZDj4Mdury120uvoM/view?usp=sharing?raw=true)
