@@ -1,7 +1,7 @@
 cachelib==0.1.1
 certifi==2020.11.8
 chardet==3.0.4
-click==7.1.2
+click==8.0.1
 cs50==6.0.2
 Flask==1.1.2
 Flask-Session==0.3.2
